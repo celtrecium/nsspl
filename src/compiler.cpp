@@ -467,7 +467,7 @@ void NonsenseCompiler::compileIfStatement(AST::IfStatementNode *ifstat) {
   string labelnum = to_string((intptr_t)ifstat);
 
   compileFormula(ifstat->condition);
-  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je __endif_" + labelnum + '\n';
+  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je .endif_" + labelnum + '\n';
 
   if(ifstat->ifstatement->type == NodeType::Statements)
     compileStatements(static_cast<StatementsNode*>(ifstat->ifstatement));
@@ -475,28 +475,28 @@ void NonsenseCompiler::compileIfStatement(AST::IfStatementNode *ifstat) {
     compileStatement(ifstat->ifstatement);
 
   if(ifstat->elsestatement == nullptr) {
-    currentScope->text += "__endif_" + labelnum + ":\n";
+    currentScope->text += ".endif_" + labelnum + ":\n";
     return;
   }
 
-  currentScope->text += "jmp __endelse_" + labelnum + '\n';
-  currentScope->text += "__endif_" + labelnum + ":\n";
+  currentScope->text += "jmp .endelse_" + labelnum + '\n';
+  currentScope->text += ".endif_" + labelnum + ":\n";
 
   if(ifstat->ifstatement->type == NodeType::Statements)
     compileStatements(static_cast<StatementsNode*>(ifstat->elsestatement));
   else
     compileStatement(ifstat->elsestatement);
 
-  currentScope->text += "__endelse_" + labelnum + ":\n";
+  currentScope->text += ".endelse_" + labelnum + ":\n";
 
 }
 
 void NonsenseCompiler::compileWhileStatement(AST::CycleStatementNode *whilestat) {
   string labelnum = to_string((intptr_t)whilestat);
 
-  currentScope->text += "__beginwhile_" + labelnum + ":\n";
+  currentScope->text += ".beginwhile_" + labelnum + ":\n";
   compileFormula(whilestat->condition);
-  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je __endwhile_" + labelnum + '\n';
+  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je .endwhile_" + labelnum + '\n';
 
   if(whilestat->statement->type == NodeType::Statements)
     compileStatements(static_cast<StatementsNode*>(whilestat->statement));
@@ -504,8 +504,8 @@ void NonsenseCompiler::compileWhileStatement(AST::CycleStatementNode *whilestat)
     compileStatement(whilestat->statement);
 
   currentScope->text +=
-    "jmp __beginwhile_" + labelnum + "\n "
-    "__endwhile_" + labelnum +  ":\n";
+    "jmp .beginwhile_" + labelnum + "\n "
+    ".endwhile_" + labelnum +  ":\n";
 }
 
 void NonsenseCompiler::compileForStatement(AST::CycleStatementNode *forstat) {
@@ -513,9 +513,9 @@ void NonsenseCompiler::compileForStatement(AST::CycleStatementNode *forstat) {
   ParametersNode *args = static_cast<ParametersNode*>(forstat->condition);
 
   compileFormula(args->parameters[0]);
-  currentScope->text += "__beginfor_" + labelnum + ":\n";
+  currentScope->text += ".beginfor_" + labelnum + ":\n";
   compileFormula(args->parameters[1]);
-  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je __endfor_" + labelnum + '\n';
+  currentScope->text += "cmp " NAT_AX ", 0x00\n" "je .endfor_" + labelnum + '\n';
 
   if(forstat->statement->type == NodeType::Statements)
     compileStatements(static_cast<StatementsNode*>(forstat->statement));
@@ -524,8 +524,8 @@ void NonsenseCompiler::compileForStatement(AST::CycleStatementNode *forstat) {
 
   compileFormula(args->parameters[2]);
   currentScope->text +=
-    "jmp __beginfor_" + labelnum + "\n "
-    "__endfor_" + labelnum +  ":\n";
+    "jmp .beginfor_" + labelnum + "\n "
+    ".endfor_" + labelnum +  ":\n";
 }
 
 void NonsenseCompiler::compileUnary(AST::UnaryNode *unr) {
