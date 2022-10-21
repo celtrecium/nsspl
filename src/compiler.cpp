@@ -223,7 +223,7 @@ Variable &NonsenseCompiler::getVariable(ValueNode *var) {
 Type NonsenseCompiler::getValueType(ValueNode *val) {
   switch (val->value.type) {
   case Lexer::Type::String:
-    return Type("char", 1, false);
+    return Type("byte", 1, false);
 
   case Lexer::Type::Integer:
     return Type("#ctint", 0, false);
@@ -809,7 +809,7 @@ NonsenseCompiler::NonsenseCompiler(StatementsNode &tree_)
     : tree(tree_), currentScope(static_cast<Scope *>(&global)),
       typesMap({ { "i64",   AssemblerType("qword", { "rax", "rbx", "rcx", "rbx"}, 8)},
                  { "i32",   AssemblerType("dword", { "eax", "ebx", "ecx", "edx" }, 4) },
-                 { "char",  AssemblerType("byte",  { "al", "bl" }, 1) },
+                 { "byte",  AssemblerType("byte",  { "al", "bl" }, 1) },
                  { "void",  AssemblerType("",      { "rax", "rbx", "rcx", "rdx" }, 0) }}) {
   for(auto i : tree.statements) {
     currentScope = static_cast<Scope*>(&global);
